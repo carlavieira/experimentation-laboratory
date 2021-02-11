@@ -1,4 +1,4 @@
-# Experimentation Laboratory
+# Software Experimentation Laboratory
 
 Repository dedicated to the activities executed in the Software Experimentation Laboratory 2021.1 discipline.
 
