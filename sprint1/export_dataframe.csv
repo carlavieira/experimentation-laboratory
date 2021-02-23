@@ -1,0 +1,22 @@
+nameWithOwner,createdAt,pushedAt,primaryLanguage,stargazers,releases,mergedPRs,closedIssues,totalIssues
+freeCodeCamp/freeCodeCamp,2014-12-24T17:49:19Z,2021-02-22T23:06:16Z,{'name': 'JavaScript'},{'totalCount': 320934},{'totalCount': 0},{'totalCount': 13916},{'totalCount': 14952},{'totalCount': 15181}
+996icu/996.ICU,2019-03-26T07:31:14Z,2021-01-30T09:13:56Z,{'name': 'Rust'},{'totalCount': 255399},{'totalCount': 0},{'totalCount': 1020},{'totalCount': 0},{'totalCount': 0}
+vuejs/vue,2013-07-29T03:24:51Z,2021-02-19T19:40:51Z,{'name': 'JavaScript'},{'totalCount': 179703},{'totalCount': 208},{'totalCount': 996},{'totalCount': 9002},{'totalCount': 9347}
+EbookFoundation/free-programming-books,2013-10-11T06:50:37Z,2021-02-19T17:27:03Z,,{'totalCount': 177494},{'totalCount': 0},{'totalCount': 3417},{'totalCount': 517},{'totalCount': 536}
+facebook/react,2013-05-24T16:15:54Z,2021-02-22T21:50:04Z,{'name': 'JavaScript'},{'totalCount': 164073},{'totalCount': 94},{'totalCount': 7319},{'totalCount': 9499},{'totalCount': 10057}
+jwasham/coding-interview-university,2016-06-06T02:34:12Z,2021-02-21T07:30:44Z,,{'totalCount': 155579},{'totalCount': 0},{'totalCount': 218},{'totalCount': 170},{'totalCount': 199}
+sindresorhus/awesome,2014-07-11T13:42:37Z,2021-02-21T18:07:38Z,,{'totalCount': 153564},{'totalCount': 0},{'totalCount': 522},{'totalCount': 252},{'totalCount': 269}
+tensorflow/tensorflow,2015-11-07T01:19:20Z,2021-02-22T22:59:06Z,{'name': 'C++'},{'totalCount': 153444},{'totalCount': 129},{'totalCount': 11469},{'totalCount': 26538},{'totalCount': 30349}
+kamranahmedse/developer-roadmap,2017-03-15T13:45:52Z,2021-02-19T01:20:52Z,,{'totalCount': 149648},{'totalCount': 4},{'totalCount': 62},{'totalCount': 458},{'totalCount': 503}
+twbs/bootstrap,2011-07-29T21:19:00Z,2021-02-22T20:52:45Z,{'name': 'JavaScript'},{'totalCount': 148401},{'totalCount': 67},{'totalCount': 6646},{'totalCount': 19837},{'totalCount': 20080}
+getify/You-Dont-Know-JS,2013-11-16T02:37:24Z,2021-02-08T13:38:15Z,,{'totalCount': 133868},{'totalCount': 0},{'totalCount': 350},{'totalCount': 790},{'totalCount': 867}
+ohmyzsh/ohmyzsh,2009-08-28T18:15:37Z,2021-02-22T19:22:22Z,{'name': 'Shell'},{'totalCount': 124062},{'totalCount': 0},{'totalCount': 2398},{'totalCount': 3505},{'totalCount': 3720}
+donnemartin/system-design-primer,2017-02-26T16:15:28Z,2021-02-19T15:40:47Z,{'name': 'Python'},{'totalCount': 121822},{'totalCount': 0},{'totalCount': 187},{'totalCount': 54},{'totalCount': 146}
+CyC2018/CS-Notes,2018-02-13T14:56:24Z,2021-02-20T05:48:55Z,{'name': 'Java'},{'totalCount': 121532},{'totalCount': 0},{'totalCount': 375},{'totalCount': 412},{'totalCount': 469}
+github/gitignore,2010-11-08T20:17:14Z,2021-02-22T19:12:28Z,,{'totalCount': 114336},{'totalCount': 0},{'totalCount': 1414},{'totalCount': 0},{'totalCount': 0}
+flutter/flutter,2015-03-06T22:54:58Z,2021-02-22T22:57:33Z,{'name': 'Dart'},{'totalCount': 113659},{'totalCount': 0},{'totalCount': 18697},{'totalCount': 41939},{'totalCount': 50280}
+microsoft/vscode,2015-09-03T20:23:38Z,2021-02-22T23:03:21Z,{'name': 'TypeScript'},{'totalCount': 111435},{'totalCount': 27},{'totalCount': 6331},{'totalCount': 101759},{'totalCount': 106166}
+public-apis/public-apis,2016-03-20T23:49:42Z,2021-02-22T19:43:51Z,{'name': 'Python'},{'totalCount': 111161},{'totalCount': 0},{'totalCount': 847},{'totalCount': 165},{'totalCount': 168}
+torvalds/linux,2011-09-04T22:48:12Z,2021-02-22T22:38:10Z,{'name': 'C'},{'totalCount': 105546},{'totalCount': 0},{'totalCount': 9},{'totalCount': 0},{'totalCount': 0}
+airbnb/javascript,2012-11-01T23:13:50Z,2021-02-17T08:08:54Z,{'name': 'JavaScript'},{'totalCount': 104909},{'totalCount': 0},{'totalCount': 754},{'totalCount': 985},{'totalCount': 1061}
+TheAlgorithms/Python,2016-07-16T09:44:01Z,2021-02-22T17:27:14Z,{'name': 'Python'},{'totalCount': 100246},{'totalCount': 0},{'totalCount': 1464},{'totalCount': 606},{'totalCount': 624}
