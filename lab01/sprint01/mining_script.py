@@ -61,7 +61,7 @@ while condition:
         response.raise_for_status()
         data = dict(response.json())
         df = pd.DataFrame(data['data']['search']['nodes'])
-        df.to_csv(os.path.abspath(os.getcwd()) + '/export_dataframe.csv', index=False, header=True)
+        df.to_csv(os.path.abspath(os.getcwd()) + '/sprint01/export_dataframe.csv', index=False, header=True)
 
     except requests.exceptions.ConnectionError:
         print(f'Connection error during the request')
