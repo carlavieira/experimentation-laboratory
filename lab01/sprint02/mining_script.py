@@ -4,8 +4,8 @@ import requests
 import pandas as pd
 
 num_sprint="02"
-num_nodes_total=50
-num_nodes_request=10
+num_nodes_total=1000
+num_nodes_request=5
 
 # Retrieves Github API Token from .env
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -124,7 +124,7 @@ for page in range(pages):
             print(f'File not found.')
 
         else:
-            print(f"Page {page} succeeded!")
+            print(f"Page {page}/{pages} succeeded!")
             condition = False
 
 nodes.to_csv(os.path.abspath(os.getcwd()) + f'/sprint{num_sprint}/export_dataframe.csv', index=False, header=True)
