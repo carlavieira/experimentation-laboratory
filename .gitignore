@@ -1,3 +1,5 @@
-.idea/*
-*/.env
+.idea
+.vscode
+.env
 */venv/
+venv
