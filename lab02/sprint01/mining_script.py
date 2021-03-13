@@ -4,7 +4,7 @@ import requests
 import pandas as pd
 from datetime import date, datetime
 
-num_sprint = "02"
+num_sprint = "01"
 num_nodes_total = 200
 num_nodes_request = 5
 
@@ -85,6 +85,7 @@ def calculate_closed_issues_percent(op1, op2):
 last_cursor = None
 nodes = pd.DataFrame()
 pages = num_nodes_total // num_nodes_request
+print(f"**** Starting GitHub API Requests *****")
 print(f"It will take {pages} pages")
 response = ""
 for page in range(pages):
@@ -114,25 +115,17 @@ for page in range(pages):
             print(f"Page {page+1}/{pages} succeeded!")
             condition = False
 
+nodes['Owner/Repository'] = ''
+nodes['Stars'] = ''
 nodes['Repository Age'] = ''
-nodes['Accepted Pull Requests'] = ''
 nodes['Total Releases'] = ''
-nodes['Time Since Last Update'] = ''
-nodes['Language'] = ''
-nodes['Closed Issues Percent'] = ''
 
 for index, row in nodes.iterrows():
 
+    nodes.loc[index, 'Owner/Repository'] = row['nameWithOwner']
+    nodes.loc[index, 'Stars'] = row['stargazers']['totalCount']
     nodes.loc[index, 'Repository Age'] = calculate_age(row['createdAt'])
-    nodes.loc[index, 'Accepted Pull Requests'] = row['mergedPRs']['totalCount']
     nodes.loc[index, 'Total Releases'] = row['releases']['totalCount']
-    nodes.loc[index, 'Days Since Last Update'] = calculate_age(row['pushedAt'])
-    nodes.loc[index, 'Closed Issues Percent'] = calculate_closed_issues_percent(row['closedIssues']['totalCount'],
-                                                                                row['totalIssues']['totalCount'])
-    if row['primaryLanguage']:
-        nodes.loc[index, 'Language'] = row['primaryLanguage']['name']
-    else:
-        nodes.loc[index, 'Language'] = None
 
 
 nodes.to_csv(os.path.abspath(os.getcwd()) + f'/sprint{num_sprint}/export_dataframe.csv', index=False, header=True)
