@@ -22,33 +22,21 @@ URL = 'https://api.github.com/graphql'
 def create_query(cursor):
     query = """
      query github {
-        search (query: "stars:>10000", type:REPOSITORY, first:""" + str(num_nodes_request) + """) {
+        search (query: "language:java", type:REPOSITORY, first:""" + str(num_nodes_request) + """) {
             pageInfo {
                 endCursor
                 }
             nodes {
               ... on Repository {
                 nameWithOwner
-                createdAt  # RQ 01
+                createdAt
                 pushedAt
-                primaryLanguage {
-                  name
-                } 
                 stargazers {
                   totalCount
                 }
                 releases {
                   totalCount
-                } # RQ 03
-                mergedPRs: pullRequests(states: MERGED) {
-                  totalCount
-                }
-                closedIssues: issues(states: CLOSED) {
-                  totalCount
                 } 
-                totalIssues: issues {
-                  totalCount
-                }
               }
             }
         }
@@ -57,7 +45,7 @@ def create_query(cursor):
     if cursor is not None:
         query = """
          query github {
-            search (query: "stars:>10000", type:REPOSITORY, first:""" + str(
+            search (query: "language:java", type:REPOSITORY, first:""" + str(
             num_nodes_request) + """, after:""" + "\"" + cursor + "\"" + """) {
                 pageInfo {
                     endCursor
@@ -67,24 +55,12 @@ def create_query(cursor):
                     nameWithOwner
                     createdAt
                     pushedAt
-                    primaryLanguage {
-                      name
-                    } 
                     stargazers {
                       totalCount
                     }
                     releases {
                       totalCount
-                    } # RQ 03
-                    mergedPRs: pullRequests(states: MERGED) {
-                      totalCount
-                    }
-                    closedIssues: issues(states: CLOSED) {
-                      totalCount
                     } 
-                    totalIssues: issues {
-                      totalCount
-                    }
                   }
                 }
             }
