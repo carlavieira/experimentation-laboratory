@@ -3,10 +3,12 @@ import dotenv
 import requests
 import pandas as pd
 from datetime import date, datetime
+from github import Github
+# from ds4se.metrics_java import JavaAnalyzer
 
 num_sprint = "01"
-num_nodes_total = 200
-num_nodes_request = 5
+num_nodes_total = 100
+num_nodes_request = 10
 
 # Retrieves Github API Token from .env
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -30,7 +32,6 @@ def create_query(cursor):
               ... on Repository {
                 nameWithOwner
                 createdAt
-                pushedAt
                 stargazers {
                   totalCount
                 }
@@ -54,7 +55,6 @@ def create_query(cursor):
                   ... on Repository {
                     nameWithOwner
                     createdAt
-                    pushedAt
                     stargazers {
                       totalCount
                     }
@@ -75,18 +75,12 @@ def calculate_age(date_time_string):
     return (today - date_time_obj).days
 
 
-def calculate_closed_issues_percent(op1, op2):
-    if op2 > 0:
-        return (op1/op2)*100
-
-    return None
-
 
 last_cursor = None
 nodes = pd.DataFrame()
 pages = num_nodes_total // num_nodes_request
-print(f"**** Starting GitHub API Requests *****")
-print(f"It will take {pages} pages")
+print(f"\n**** Starting GitHub API Requests *****\n")
+print(f"It will take {pages} pages\n")
 response = ""
 for page in range(pages):
 
@@ -115,17 +109,41 @@ for page in range(pages):
             print(f"Page {page+1}/{pages} succeeded!")
             condition = False
 
-nodes['Owner/Repository'] = ''
-nodes['Stars'] = ''
-nodes['Repository Age'] = ''
-nodes['Total Releases'] = ''
+nodes = nodes.rename(columns={'nameWithOwner': 'Owner/Repository', 'stargazers': 'Stars', 'createdAt': 'Repository Age', 'releases': 'Total Releases'})
+nodes['Stars'] = nodes['Stars'].apply(lambda x : x['totalCount'])
+nodes['Repository Age'] = nodes['Repository Age'].apply(calculate_age)
+nodes['Total Releases'] = nodes['Total Releases'].apply(lambda x : x['totalCount'])
 
-for index, row in nodes.iterrows():
 
-    nodes.loc[index, 'Owner/Repository'] = row['nameWithOwner']
-    nodes.loc[index, 'Stars'] = row['stargazers']['totalCount']
-    nodes.loc[index, 'Repository Age'] = calculate_age(row['createdAt'])
-    nodes.loc[index, 'Total Releases'] = row['releases']['totalCount']
+print("\n****  GitHub API Requests Succeeded *****\n")
+
+print("\n****  Starting Cloning Process *****\n")
+
+
+
+github = Github("admited", TOKEN)
+github_user = github.get_user()
+
+#repos = nodes["Owner/Repository"]
+repos = ["freeCodeCamp/freeCodeCamp", ]
+
+
+for repo in repos:
+    original_repo = github.get_repo(repo)
+    cmd = "git clone {}".format(original_repo.clone_url)
+    print("Starting to clone {}".format(original_repo.name))
+    print("Running command '{}'".format(cmd))
+    os.system(cmd)
+    print("Finshed cloning {}".format(original_repo.name))
+
+    print("Calculando métricas..")
+
+    cmd = "rm -rf {}".format(original_repo.name)
+    os.system(cmd)
+    print("Finshed removing {}".format(original_repo.name))
+    print("#####################################")
+    print("")
+
 
 
 nodes.to_csv(os.path.abspath(os.getcwd()) + f'/sprint{num_sprint}/export_dataframe.csv', index=False, header=True)
