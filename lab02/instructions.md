@@ -16,24 +16,29 @@ Com o objetivo de analisar repositórios relevantes, escritos na linguagem estud
 ### 2. Questões de Pesquisa
 Desta forma, este laboratório tem o objetivo de responder às seguintes questões de pesquisa:
 
-RQ 01. Qual a relação entre a popularidade dos repositórios e as métricas de qualidade?
-RQ 02. Qual a relação entre a maturidade do repositórios e as suas métricas de qualidade ? 
-RQ 03. Qual a relação entre a atividade dos repositórios e as suas métricas de qualidade?  
-RQ 04. Qual a relação entre o tamanho dos repositórios e as suas métricas de qualidade?  
+* RQ 01. Qual a relação entre a popularidade dos repositórios e as métricas de qualidade?
+* RQ 02. Qual a relação entre a maturidade do repositórios e as suas métricas de qualidade ? 
+* RQ 03. Qual a relação entre a atividade dos repositórios e as suas métricas de qualidade?  
+* RQ 04. Qual a relação entre o tamanho dos repositórios e as suas métricas de qualidade?  
  
 
 ### 3. Definição de Métricas
-Para cada questão de pesquisa, realizaremos a comparação entre as características do processo de desenvolvimento dos repositórios e os seus valores obtidos para as seguintes métricas. Para as métricas de processo, define-se:
 
-Popularidade: número de estrelas
-Tamanho: linhas de código (LOC) e linhas de comentários
-Atividade: número de releases
-Maturidade: idade (em anos) de cada repositório coletado
+Para cada questão de pesquisa, realizaremos a comparação entre as características do processo de desenvolvimento dos repositórios e os seus valores obtidos para as seguintes métricas. 
+
+Para as métricas de processo, define-se:
+
+* Popularidade: número de estrelas
+* Tamanho: linhas de código (LOC) e linhas de comentários
+* Atividade: número de releases
+* Maturidade: idade (em anos) de cada repositório coletado
+
+
 Por métricas de qualidade, entende-se:
 
-CBO: Coupling between objects
-DIT: Depth Inheritance Tree
-WMC: Weight Method Class
+* CBO: Coupling between objects
+* DIT: Depth Inheritance Tree
+* WMC: Weight Method Class
  
 
 ### 4. Coleta e Análise de Dados
