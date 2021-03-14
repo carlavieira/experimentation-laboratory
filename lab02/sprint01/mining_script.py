@@ -2,13 +2,14 @@ import os
 import dotenv
 import requests
 import pandas as pd
-from datetime import date, datetime
+from datetime import datetime
 from github import Github
+
 # from ds4se.metrics_java import JavaAnalyzer
 
 num_sprint = "01"
-num_nodes_total = 100
-num_nodes_request = 10
+num_nodes_total = 5
+num_nodes_request = 5
 
 # Retrieves Github API Token from .env
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -24,7 +25,7 @@ URL = 'https://api.github.com/graphql'
 def create_query(cursor):
     query = """
      query github {
-        search (query: "language:java", type:REPOSITORY, first:""" + str(num_nodes_request) + """) {
+        search (query: "stars:>10000 language:java", type:REPOSITORY, first:""" + str(num_nodes_request) + """) {
             pageInfo {
                 endCursor
                 }
@@ -46,7 +47,7 @@ def create_query(cursor):
     if cursor is not None:
         query = """
          query github {
-            search (query: "language:java", type:REPOSITORY, first:""" + str(
+            search (query: "stars:>10000 language:java", type:REPOSITORY, first:""" + str(
             num_nodes_request) + """, after:""" + "\"" + cursor + "\"" + """) {
                 pageInfo {
                     endCursor
@@ -73,7 +74,6 @@ def calculate_age(date_time_string):
     today = datetime.today()
     date_time_obj = datetime.strptime(date_time_string[0:10], "%Y-%m-%d")
     return (today - date_time_obj).days
-
 
 
 last_cursor = None
@@ -106,45 +106,57 @@ for page in range(pages):
             print(f'File not found.')
 
         else:
-            print(f"Page {page+1}/{pages} succeeded!")
+            print(f"Page {page + 1}/{pages} succeeded!")
             condition = False
 
-nodes = nodes.rename(columns={'nameWithOwner': 'Owner/Repository', 'stargazers': 'Stars', 'createdAt': 'Repository Age', 'releases': 'Total Releases'})
-nodes['Stars'] = nodes['Stars'].apply(lambda x : x['totalCount'])
+nodes = nodes.rename(columns={'nameWithOwner': 'Owner/Repository', 'stargazers': 'Stars', 'createdAt': 'Repository Age',
+                              'releases': 'Total Releases'})
+nodes['Stars'] = nodes['Stars'].apply(lambda x: x['totalCount'])
 nodes['Repository Age'] = nodes['Repository Age'].apply(calculate_age)
-nodes['Total Releases'] = nodes['Total Releases'].apply(lambda x : x['totalCount'])
-
+nodes['Total Releases'] = nodes['Total Releases'].apply(lambda x: x['totalCount'])
 
 print("\n****  GitHub API Requests Succeeded *****\n")
 
 print("\n****  Starting Cloning Process *****\n")
 
-
-
 github = Github("admited", TOKEN)
 github_user = github.get_user()
 
-#repos = nodes["Owner/Repository"]
-repos = ["freeCodeCamp/freeCodeCamp", ]
+# repos = nodes["Owner/Repository"]
 
+nodes['CBO'] = ''
+nodes['DIT'] = ''
+nodes['WMC'] = ''
+nodes['LOC'] = ''
 
-for repo in repos:
-    original_repo = github.get_repo(repo)
+for index, row in nodes.iterrows():
+    original_repo = github.get_repo(row['Owner/Repository'])
     cmd = "git clone {}".format(original_repo.clone_url)
     print("Starting to clone {}".format(original_repo.name))
     print("Running command '{}'".format(cmd))
     os.system(cmd)
-    print("Finshed cloning {}".format(original_repo.name))
+    print("Finished cloning {}".format(original_repo.name))
 
-    print("Calculando métricas..")
+    print("Calculating metrics..")
+    cmd = "java -jar ck.jar {}/{}/ 1 0 0".format(os.path.abspath(os.getcwd()), original_repo.name)
+    os.system(cmd)
+    os.system('ls')
+    metrics_df = pd.read_csv(os.path.abspath(os.getcwd()) + "/class.csv", usecols=['cbo', 'dit', 'wmc', 'loc'])
+    medians = metrics_df.median(skipna=True)
+    """
+    Se definirmos skipna=True, ele ignora a NaN no campo de dados.
+    Isto nos permite calcular a mediana do DataFrame ao longo do eixo da coluna, ignorando os valores NaN.
+    """
+    nodes.loc[index, 'CBO'] = medians['cbo']
+    nodes.loc[index, 'DIT'] = medians['dit']
+    nodes.loc[index, 'WMC'] = medians['wmc']
+    nodes.loc[index, 'LOC'] = medians['loc']
 
     cmd = "rm -rf {}".format(original_repo.name)
     os.system(cmd)
-    print("Finshed removing {}".format(original_repo.name))
+    print("Finished removing {}".format(original_repo.name))
     print("#####################################")
     print("")
 
-
-
-nodes.to_csv(os.path.abspath(os.getcwd()) + f'/sprint{num_sprint}/export_dataframe.csv', index=False, header=True)
+nodes.to_csv(os.path.abspath(os.getcwd()) + f'/export_dataframe.csv', index=False, header=True)
 print("Successful mining! Saved csv with mining results")
