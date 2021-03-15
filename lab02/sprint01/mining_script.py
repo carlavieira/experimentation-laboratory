@@ -5,10 +5,8 @@ import pandas as pd
 from datetime import datetime
 from github import Github
 
-# from ds4se.metrics_java import JavaAnalyzer
-
 num_sprint = "01"
-num_nodes_total = 5
+num_nodes_total = 1000
 num_nodes_request = 5
 
 # Retrieves Github API Token from .env
@@ -132,7 +130,7 @@ nodes['LOC'] = ''
 for index, row in nodes.iterrows():
     original_repo = github.get_repo(row['Owner/Repository'])
     cmd = "git clone {}".format(original_repo.clone_url)
-    print("Starting to clone {}".format(original_repo.name))
+    print("Starting to clone {}. The {}th repo...".format(original_repo.name, index))
     print("Running command '{}'".format(cmd))
     os.system(cmd)
     print("Finished cloning {}".format(original_repo.name))
@@ -140,18 +138,21 @@ for index, row in nodes.iterrows():
     print("Calculating metrics..")
     cmd = "java -jar ck.jar {}/{}/ 1 0 0".format(os.path.abspath(os.getcwd()), original_repo.name)
     os.system(cmd)
-    os.system('ls')
+    # Leitura do csv criado pelo CK, selecionando apenas as colunas que importam para o estudo
     metrics_df = pd.read_csv(os.path.abspath(os.getcwd()) + "/class.csv", usecols=['cbo', 'dit', 'wmc', 'loc'])
+    # Cálculo das medianas de cada métrica do repositório atual
     medians = metrics_df.median(skipna=True)
     """
     Se definirmos skipna=True, ele ignora a NaN no campo de dados.
     Isto nos permite calcular a mediana do DataFrame ao longo do eixo da coluna, ignorando os valores NaN.
     """
+    # Adicionando os valores calculados no DataFrame principal na linha correspondente ao repositório
     nodes.loc[index, 'CBO'] = medians['cbo']
     nodes.loc[index, 'DIT'] = medians['dit']
     nodes.loc[index, 'WMC'] = medians['wmc']
     nodes.loc[index, 'LOC'] = medians['loc']
 
+    # Comando para apagar o repositório clonado a cada iteração
     cmd = "rm -rf {}".format(original_repo.name)
     os.system(cmd)
     print("Finished removing {}".format(original_repo.name))
