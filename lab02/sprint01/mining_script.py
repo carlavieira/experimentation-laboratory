@@ -7,7 +7,7 @@ from github import Github
 
 num_sprint = "01"
 num_nodes_total = 1000
-num_nodes_request = 5
+num_nodes_request = 10
 
 # Retrieves Github API Token from .env
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -23,7 +23,7 @@ URL = 'https://api.github.com/graphql'
 def create_query(cursor):
     query = """
      query github {
-        search (query: "stars:>10000 language:java", type:REPOSITORY, first:""" + str(num_nodes_request) + """) {
+        search (query: "stars:>100 language:java", type:REPOSITORY, first:""" + str(num_nodes_request) + """) {
             pageInfo {
                 endCursor
                 }
@@ -45,7 +45,7 @@ def create_query(cursor):
     if cursor is not None:
         query = """
          query github {
-            search (query: "stars:>10000 language:java", type:REPOSITORY, first:""" + str(
+            search (query: "stars:>100 language:java", type:REPOSITORY, first:""" + str(
             num_nodes_request) + """, after:""" + "\"" + cursor + "\"" + """) {
                 pageInfo {
                     endCursor
@@ -75,7 +75,8 @@ def calculate_age(date_time_string):
 
 
 last_cursor = None
-nodes = pd.DataFrame()
+# nodes = pd.DataFrame()
+repos_data_array = []
 pages = num_nodes_total // num_nodes_request
 print(f"\n**** Starting GitHub API Requests *****\n")
 print(f"It will take {pages} pages\n")
@@ -89,10 +90,11 @@ for page in range(pages):
             response = requests.post(f'{URL}', json={'query': create_query(last_cursor)}, headers=HEADERS)
             response.raise_for_status()
             data = dict(response.json())
+
             last_cursor = data['data']['search']['pageInfo']['endCursor']
 
-            df = pd.DataFrame(data['data']['search']['nodes'])
-            nodes = nodes.append(df)
+            for d in data['data']['search']['nodes']:
+                repos_data_array.append(d)
 
         except requests.exceptions.ConnectionError:
             print(f'Connection error during the request')
@@ -106,6 +108,8 @@ for page in range(pages):
         else:
             print(f"Page {page + 1}/{pages} succeeded!")
             condition = False
+
+nodes = pd.DataFrame(repos_data_array)
 
 nodes = nodes.rename(columns={'nameWithOwner': 'Owner/Repository', 'stargazers': 'Stars', 'createdAt': 'Repository Age',
                               'releases': 'Total Releases'})
@@ -132,32 +136,40 @@ for index, row in nodes.iterrows():
     cmd = "git clone {}".format(original_repo.clone_url)
     print("Starting to clone {}. The {}th repo...".format(original_repo.name, index))
     print("Running command '{}'".format(cmd))
-    os.system(cmd)
-    print("Finished cloning {}".format(original_repo.name))
 
-    print("Calculating metrics..")
-    cmd = "java -jar ck.jar {}/{}/ 1 0 0".format(os.path.abspath(os.getcwd()), original_repo.name)
-    os.system(cmd)
-    # Leitura do csv criado pelo CK, selecionando apenas as colunas que importam para o estudo
-    metrics_df = pd.read_csv(os.path.abspath(os.getcwd()) + "/class.csv", usecols=['cbo', 'dit', 'wmc', 'loc'])
-    # Cálculo das medianas de cada métrica do repositório atual
-    medians = metrics_df.median(skipna=True)
-    """
-    Se definirmos skipna=True, ele ignora a NaN no campo de dados.
-    Isto nos permite calcular a mediana do DataFrame ao longo do eixo da coluna, ignorando os valores NaN.
-    """
-    # Adicionando os valores calculados no DataFrame principal na linha correspondente ao repositório
-    nodes.loc[index, 'CBO'] = medians['cbo']
-    nodes.loc[index, 'DIT'] = medians['dit']
-    nodes.loc[index, 'WMC'] = medians['wmc']
-    nodes.loc[index, 'LOC'] = medians['loc']
+    try:
+        os.system(cmd)
+        print("Finished cloning {}".format(original_repo.name))
 
-    # Comando para apagar o repositório clonado a cada iteração
-    cmd = "rm -rf {}".format(original_repo.name)
-    os.system(cmd)
-    print("Finished removing {}".format(original_repo.name))
-    print("#####################################")
-    print("")
+        print("Calculating metrics..")
+        cmd = "java -jar ck.jar {}/{}/ 1 0 0".format(os.path.abspath(os.getcwd()), original_repo.name)
+        success = os.system(cmd)
+        # Leitura do csv criado pelo CK, selecionando apenas as colunas que importam para o estudo
+        metrics_df = pd.read_csv(os.path.abspath(os.getcwd()) + "/class.csv", usecols=['cbo', 'dit', 'wmc', 'loc'])
+        # Cálculo das medianas de cada métrica do repositório atual
+        medians = metrics_df.median(skipna=True)
+        """
+        Se definirmos skipna=True, ele ignora a NaN no campo de dados.
+        Isto nos permite calcular a mediana do DataFrame ao longo do eixo da coluna, ignorando os valores NaN.
+        """
+        # Adicionando os valores calculados no DataFrame principal na linha correspondente ao repositório
+        nodes.loc[index, 'CBO'] = medians['cbo']
+        nodes.loc[index, 'DIT'] = medians['dit']
+        nodes.loc[index, 'WMC'] = medians['wmc']
+        nodes.loc[index, 'LOC'] = medians['loc']
+
+        # Comando para apagar o repositório clonado a cada iteração
+        cmd = "rm -rf {}".format(original_repo.name)
+        os.system(cmd)
+        print("Finished removing {}".format(original_repo.name))
+        print("#####################################")
+        print("")
+        if success != 0:
+            raise Exception("Error when apply metrics...")
+
+    except Exception as e:
+        print('Failure at repo {}'.format(original_repo.name))
+        print(e)
 
 nodes.to_csv(os.path.abspath(os.getcwd()) + f'/export_dataframe.csv', index=False, header=True)
 print("Successful mining! Saved csv with mining results")
