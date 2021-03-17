@@ -20,7 +20,8 @@ for index, row in nodes.iterrows():
         try:
             original_repo = github.get_repo(row['Owner/Repository'])
             cmd = "git clone {}".format(original_repo.clone_url)
-            print("Starting to clone {}. The {}th repo...".format(original_repo.name, index))
+            print("\n\n #####################################")
+            print("Starting to clone {}. The {}th repo...".format(original_repo.name, index+1))
             print("Running command '{}'".format(cmd))
 
             os.system(cmd)
@@ -43,6 +44,10 @@ for index, row in nodes.iterrows():
             nodes.loc[index, 'WMC'] = medians['wmc']
             nodes.loc[index, 'LOC'] = medians['loc']
 
+            print(f"Saving metrics for {original_repo.name}: CBO={medians['cbo']}, DIT={medians['dit']}, WMC={medians['wmc']}, LOC={medians['loc']}.")
+            nodes.to_csv(os.path.abspath(os.getcwd()) + f'/export_dataframe.csv', index=False, header=True)
+
+
             # Comando para apagar o repositório clonado a cada iteração
             cmd = "rm -rf {}".format(original_repo.name)
             os.system(cmd)
@@ -51,15 +56,13 @@ for index, row in nodes.iterrows():
             print("")
             if success != 0:
                 raise Exception("Error when apply metrics...")
-            print(f"Saving metrics for {original_repo.name}: CBO={medians['cbo']}, DIT={medians['dit']}, WMC={medians['wmc']}, LOC={medians['loc']}.")
-            nodes.to_csv(os.path.abspath(os.getcwd()) + f'/export_dataframe.csv', index=False, header=True)
 
         except Exception as e:
             cmd = "rm -rf {}".format(original_repo.name)
             os.system(cmd)
             print("Finished removing {}".format(original_repo.name))
-            print("#####################################")
             print('Failure at repo {}'.format(original_repo.name))
+            print("#####################################")
             print(e)
 
 
