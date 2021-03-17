@@ -52,7 +52,7 @@ for index, row in nodes.iterrows():
             if success != 0:
                 raise Exception("Error when apply metrics...")
             print(f"Saving metrics for {original_repo.name}: CBO={medians['cbo']}, DIT={medians['dit']}, WMC={medians['wmc']}, LOC={medians['loc']}.")
-            nodes.to_csv(os.path.abspath(os.getcwd()) + f'/dataframe_with_metrics.csv', index=False, header=True)
+            nodes.to_csv(os.path.abspath(os.getcwd()) + f'/export_dataframe.csv', index=False, header=True)
 
         except Exception as e:
             cmd = "rm -rf {}".format(original_repo.name)
