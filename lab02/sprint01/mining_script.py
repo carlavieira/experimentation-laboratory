@@ -117,6 +117,11 @@ nodes['Stars'] = nodes['Stars'].apply(lambda x: x['totalCount'])
 nodes['Repository Age'] = nodes['Repository Age'].apply(calculate_age)
 nodes['Total Releases'] = nodes['Total Releases'].apply(lambda x: x['totalCount'])
 
+nodes['CBO'] = ''
+nodes['DIT'] = ''
+nodes['WMC'] = ''
+nodes['LOC'] = ''
+
 print("\n****  GitHub API Requests Succeeded *****\n")
 
 nodes.to_csv(os.path.abspath(os.getcwd()) + f'/export_dataframe.csv', index=False, header=True)
