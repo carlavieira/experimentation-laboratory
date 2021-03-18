@@ -34,6 +34,7 @@ for index, row in nodes.iterrows():
             metrics_df = pd.read_csv(os.path.abspath(os.getcwd()) + "/class.csv", usecols=['cbo', 'dit', 'wmc', 'loc'])
             # Cálculo das medianas de cada métrica do repositório atual
             medians = metrics_df.median(skipna=True)
+            soma = nodes.sum(skipna=True)
             """
             Se definirmos skipna=True, ele ignora a NaN no campo de dados.
             Isto nos permite calcular a mediana do DataFrame ao longo do eixo da coluna, ignorando os valores NaN.
@@ -42,7 +43,7 @@ for index, row in nodes.iterrows():
             nodes.loc[index, 'CBO'] = medians['cbo']
             nodes.loc[index, 'DIT'] = medians['dit']
             nodes.loc[index, 'WMC'] = medians['wmc']
-            nodes.loc[index, 'LOC'] = medians['loc']
+            nodes.loc[index, 'LOC'] = soma['loc']
 
             print(f"Saving metrics for {original_repo.name}: CBO={medians['cbo']}, DIT={medians['dit']}, WMC={medians['wmc']}, LOC={medians['loc']}.")
             nodes.to_csv(os.path.abspath(os.getcwd()) + f'/export_dataframe.csv', index=False, header=True)
