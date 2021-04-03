@@ -43,7 +43,8 @@ for index, row in nodes.iterrows():
             nodes.loc[index, 'WMC'] = medians['wmc']
             nodes.loc[index, 'LOC'] = soma['loc']
 
-            print(f"Saving metrics for {original_repo.name}: CBO={medians['cbo']}, DIT={medians['dit']}, WMC={medians['wmc']}, LOC={soma['loc']}.")
+            print(f"Saving metrics for {original_repo.name}: CBO={medians['cbo']}, DIT={medians['dit']}, "
+                  f"WMC={medians['wmc']}, LOC={soma['loc']}.")
 
             nodes.to_csv(os.path.abspath(os.getcwd()) + f'/export_dataframe.csv', index=False, header=True)
             # Comando para apagar o repositório clonado a cada iteração
