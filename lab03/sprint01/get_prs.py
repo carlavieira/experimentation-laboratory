@@ -122,9 +122,8 @@ def save_clean_data(data, repo, status, prs):
 				if cleaned_data['closedAt']:
 					cleaned_data['duration'] = calculate_duration(cleaned_data['createdAt'], cleaned_data['closedAt'])
 
-			# if cleaned_data['reviews'] > 0 and cleaned_data['duration'] > 1:
-			# 	prs = prs.append(cleaned_data, ignore_index=True)
-			prs = prs.append(cleaned_data, ignore_index=True)
+			if cleaned_data['reviews'] > 0 and cleaned_data['duration'] > 1:
+				prs = prs.append(cleaned_data, ignore_index=True)
 	return prs
 
 
@@ -133,7 +132,6 @@ if __name__ == "__main__":
 	repos = list(load_json("repos_info.json"))
 	list_status = ['merged', 'closed']
 	token_index = 0
-	hasNextPage = True
 	remaining_nodes = 5000
 	headers = generate_new_header()
 	pr_cursor = None
@@ -145,6 +143,7 @@ if __name__ == "__main__":
 			page_counter=0
 			totalcount_name= "prs_"+status
 			total_pages = repo[totalcount_name] // 10
+			hasNextPage = True
 			while hasNextPage:
 				try:
 					if remaining_nodes < 200:
