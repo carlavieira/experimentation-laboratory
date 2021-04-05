@@ -1,1 +1,1 @@
-id,databaseId,createdAt,additions,deletions,closed,closedAt,merged,mergedAt,body,participants,comments,reviews
+owner,name,id,databaseId,createdAt,additions,deletions,totalLines,files,linesFile,closed,closedAt,merged,mergedAt,duration,body,participants,comments,reviews
