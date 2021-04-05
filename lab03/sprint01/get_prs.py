@@ -22,7 +22,7 @@ URL = 'https://api.github.com/graphql'
 
 
 # TODO refinar query para pegar todos os dados
-def create_query(cursor, owner, name, state):
+def create_query(cursor=None, owner=None, name=None, state=None):
 	if cursor is None:
 		cursor = 'null'
 
@@ -32,13 +32,14 @@ def create_query(cursor, owner, name, state):
 	return """
 		{
 			repository(owner: "%s", name: "%s") {
-				%s: pullrequests(first: 3, after: %s, states: %s) {
+				%s: pullRequests(first: 10, after: %s, states: %s) {
 					pageInfo {
 						endCursor
 						hasNextPage
 					}
 					nodes {
 						createdAt
+						closedAt
 						mergedAt
 						bodyText
 						id
@@ -53,6 +54,9 @@ def create_query(cursor, owner, name, state):
 						}
 					}
 				}
+			}
+			rateLimit {
+				remaining
 			}
 		}
 	""" % (owner, name, state, cursor, state)
@@ -73,6 +77,15 @@ def load_json(filename='data.json'):
 		print(f'Failed to read data... Perform get_repos and assure data.json is in folder.')
 
 
+def save_data(dict):
+	with open('data_processed.json', 'a') as fp:
+		json.dump(dict, fp, sort_keys=True, indent=4)
+
+	df = pd.DataFrame(dict)
+	df.to_csv(os.path.abspath(os.getcwd()) + f'/export_dataframe.csv', index=False, header=True)
+	print("Saved csv with mining results")
+
+
 if __name__ == "__main__":
 	print(f"\n**** Starting GitHub API Requests *****\n")
 	repos = list(load_json())
@@ -82,29 +95,62 @@ if __name__ == "__main__":
 	index = 0
 	data_array = []
 	for repo in repos:
-		print(repo in processed_data)
-		while condition:
-			try:
+
+		try:
+			response = requests.post(
+				f'{URL}',
+				json={'query': create_query(owner=repo['owner'], name=repo['name'], state='MERGED')},
+				headers=HEADERS)
+			response.raise_for_status()
+			data = dict(response.json())
+
+			for d in data['data']['repository']['MERGED']['nodes']:
+				cleaned_data = dict()
+				cleaned_data['owner'], cleaned_data['name'] = repo['owner'], repo['name']
+				cleaned_data['createdAt'], cleaned_data['closedAt'] = d['createdAt'], d['closedAt']
+				data_array.append(cleaned_data)
+				index += 1
+			# TODO -> get nodes and append to data_array
+
+			pr_cursor = data['data']['repository']['MERGED']['pageInfo']['endCursor']
+			hasNextPage = data['data']['repository']['MERGED']['pageInfo']['hasNextPage']
+			remaining_nodes = data['data']['rateLimit']['remaining']
+
+			while hasNextPage and remaining_nodes > 200:
 				response = requests.post(
 					f'{URL}',
-					json={'query': create_query(json_data., owner, name, state)},
+					json={'query': create_query(owner=repo['owner'], name=repo['name'], state='MERGED', cursor=pr_cursor)},
 					headers=HEADERS)
 				response.raise_for_status()
 				data = dict(response.json())
-				for d in data['data']['search']['nodes']:
-					# TODO -> get nodes and append to data_array
+				for d in data['data']['repository']['MERGED']['nodes']:
+					cleaned_data = dict()
+					cleaned_data['owner'], cleaned_data['name'] = repo['owner'], repo['name']
+					cleaned_data['createdAt'], cleaned_data['closedAt'] = d['createdAt'], d['closedAt']
+					data_array.append(cleaned_data)
+					index += 1
 
-				last_cursor = data['data']['search']['pageInfo']['endCursor']
-				condition = data['data']['search']['pageInfo']['hasNextPage']
+				# TODO -> get nodes and append to data_array
+				pr_cursor = data['data']['repository']['MERGED']['pageInfo']['endCursor']
+				hasNextPage = data['data']['repository']['MERGED']['pageInfo']['hasNextPage']
+				remaining_nodes = data['data']['rateLimit']['remaining']
+				if hasNextPage and remaining_nodes > 200:
+					print('continuing with same repo')
 
-			except requests.exceptions.ConnectionError:
-				print(f'Connection error during the request')
+				else:
+					print('changing repo...')
 
-			except requests.exceptions.HTTPError:
-				print(f'HTTP request error. STATUS: {response.status_code}')
+		except requests.exceptions.ConnectionError:
+			print(f'Connection error during the request')
 
-			except FileNotFoundError:\
-				print(f'File not found.')
+		except requests.exceptions.HTTPError:
+			print(f'HTTP request error. STATUS: {response.status_code}')
 
-			finally:
-				print("last_cursor {}".format(last_cursor))
+		except FileNotFoundError:
+			print(f'File not found.')
+
+		finally:
+			save_data(data_array)
+			break
+
+	print(index)
