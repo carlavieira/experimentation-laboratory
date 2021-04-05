@@ -113,7 +113,7 @@ def save_clean_data(data, repo, status, prs):
 			cleaned_data['deletions'], cleaned_data['closed'], cleaned_data['closedAt'], cleaned_data['merged'], \
 			cleaned_data['mergedAt'], cleaned_data['body'], cleaned_data['participants'], cleaned_data['comments'], \
 			cleaned_data['reviews'] = d['id'], d['databaseId'], d['createdAt'], d['additions'], d['deletions'], d['closed'], \
-									  d['closedAt'], d['merged'], d['mergedAt'], d['body'], d['participants']['totalCount'], \
+									  d['closedAt'], d['merged'], d['mergedAt'], len(d['body']), d['participants']['totalCount'], \
 									  d['comments']['totalCount'], d['reviews']['totalCount']
 			if status == 'merged':
 				if cleaned_data['mergedAt']:
