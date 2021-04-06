@@ -112,7 +112,7 @@ def do_github_request(repository):
     return dict(res.json()), res
 
 
-def save_clean_data(prs):
+def save_clean_data(prs,data, repo, status):
     for d in data['data']['repository'][status.upper()]['nodes']:
         if d['databaseId'] not in prs['databaseId'].values:
             cleaned_data = dict()
@@ -123,21 +123,19 @@ def save_clean_data(prs):
             cleaned_data['createdAt'] = d['createdAt']
             cleaned_data['additions'] = d['additions']
             cleaned_data['deletions'] = d['deletions']
-            cleaned_data['number_of_files'] = d['files']['totalCount']
+            cleaned_data['files'] = d['files']['totalCount']
             cleaned_data['closed'] = d['closed']
             cleaned_data['closedAt'] = d['closedAt']
             cleaned_data['merged'] = d['merged']
             cleaned_data['mergedAt'] = d['mergedAt']
             cleaned_data['body'] = len(d['body'])
-            cleaned_data['number_of_participants'] = d['participants']['totalCount']
-            cleaned_data['number_of_comments'] = d['comments']['totalCount']
+            cleaned_data['participants'] = d['participants']['totalCount']
+            cleaned_data['comments'] = d['comments']['totalCount']
             cleaned_data['reviews'] = d['reviews']['totalCount']
             cleaned_data['totalLines'] = cleaned_data['additions'] + cleaned_data['deletions']
 
-            if cleaned_data['number_of_files']:
-                cleaned_data['linesFile'] = cleaned_data['totalLines'] / cleaned_data['number_of_files']
-            else:
-                cleaned_data['linesFile'] = 0
+            if cleaned_data['files']:
+                cleaned_data['linesFile'] = cleaned_data['totalLines'] / cleaned_data['files']
 
             if status == 'merged':
                 if cleaned_data['mergedAt']:
@@ -165,7 +163,7 @@ if __name__ == "__main__":
     skip = True
     for status in list_status:
         prs = pd.read_csv(os.path.abspath(os.getcwd()) + f"/{status}_export_dataframe.csv")
-        for repo in repos:
+        for repo in repos[31:34]:
             print('Starting {} PRs for repository {}/{} ({}/{})...'.format(status, repo['owner'], repo['name'], repo['index']+1, len(repos)))
             page_counter = 1
             totalCount_name = "prs_" + status
@@ -178,7 +176,7 @@ if __name__ == "__main__":
                         headers = generate_new_header()
 
                     data, response = do_github_request(repo)
-                    prs = save_clean_data(prs)
+                    prs = save_clean_data(prs, data, repo, status)
 
                     pr_cursor = data['data']['repository'][status.upper()]['pageInfo']['endCursor']
                     hasNextPage = data['data']['repository'][status.upper()]['pageInfo']['hasNextPage']
