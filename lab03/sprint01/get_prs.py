@@ -147,6 +147,7 @@ def save_clean_data(prs):
                     cleaned_data['duration'] = calculate_duration(cleaned_data['createdAt'], cleaned_data['closedAt'])
 
             if cleaned_data['reviews'] > 0 and cleaned_data['duration'] >= 1:
+                print(f"New PR with ID {cleaned_data['databaseId']} found")
                 prs = prs.append(cleaned_data, ignore_index=True)
 
     return prs
@@ -165,7 +166,7 @@ if __name__ == "__main__":
     for status in list_status:
         prs = pd.read_csv(os.path.abspath(os.getcwd()) + f"/{status}_export_dataframe.csv")
         for repo in repos:
-            print('Starting {} PRs for repository {}/{}...'.format(status, repo['owner'], repo['name']))
+            print('Starting {} PRs for repository {}/{} ({}/{})...'.format(status, repo['owner'], repo['name'], repo['index']+1, len(repos)))
             page_counter = 1
             totalCount_name = "prs_" + status
             total_pages = round(repo[totalCount_name] / 10 + 0.5)
@@ -197,7 +198,7 @@ if __name__ == "__main__":
                     print(f'File not found.')
 
                 finally:
-                    print('Completed page {}/{} of {} PRs for repository {}/{}'.format(
-                        page_counter, total_pages, status, repo['owner'], repo['name']))
+                    print('Completed page {}/{} of {} PRs for repository {}/{} ({}/{})'.format(
+                        page_counter, total_pages, status, repo['owner'], repo['name'],  repo['index']+1, len(repos)))
                     save_data(prs)
                     page_counter += 1
