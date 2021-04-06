@@ -19,7 +19,7 @@ TOKEN_LIST = json.loads(os.getenv("GITHUB_ACCESS_TOKENS"))
 
 def generate_new_header():
     global token_index
-    headers = {
+    new_header = {
         'Content-Type': 'application/json',
         'Authorization': f'bearer {TOKEN_LIST[token_index]}'
     }
@@ -27,7 +27,7 @@ def generate_new_header():
         token_index += 1
     else:
         token_index = 0
-    return headers
+    return new_header
 
 
 # TODO refinar query para pegar todos os dados
@@ -95,46 +95,50 @@ def load_json(filename='repos_info.json'):
         print(f'Failed to read data... Perform get_repos and assure data.json is in folder.')
 
 
-def save_data(dataframe, status):
+def save_data(dataframe):
     # with open('data_processed.json', 'a') as fp:
-    # 	dataframe_tojson = dataframe.to_json()
-    # 	json.dump(dataframe_tojson, fp, sort_keys=True, indent=4)
+    # 	dataframe_toJson = dataframe.to_json()
+    # 	json.dump(dataframe_toJson, fp, sort_keys=True, indent=4)
     dataframe.to_csv(os.path.abspath(os.getcwd()) + f'/{status}_export_dataframe.csv', index=False, header=True)
 
 
-def do_github_request(repo, status, headers, pr_cursor, response):
-    response = requests.post(
+def do_github_request(repository):
+    res = requests.post(
         f'{URL}',
-        json={'query': create_query(cursor=pr_cursor, owner=repo['owner'], name=repo['name'], state=status.upper())},
+        json={'query': create_query(cursor=pr_cursor, owner=repository['owner'],
+                                    name=repository['name'], state=status.upper())},
         headers=headers)
-    response.raise_for_status()
-    return (dict(response.json()), response)
+    res.raise_for_status()
+    return dict(res.json()), res
 
 
-def save_clean_data(data, repo, status, prs):
+def save_clean_data(prs):
     for d in data['data']['repository'][status.upper()]['nodes']:
         if d['databaseId'] not in prs['databaseId'].values:
             cleaned_data = dict()
-            cleaned_data['owner'], cleaned_data['name'] = repo['owner'], repo['name']
-            cleaned_data['id'], cleaned_data['databaseId'], cleaned_data['createdAt'], cleaned_data['additions'], \
-            cleaned_data['deletions'], cleaned_data['files'], cleaned_data['closed'], \
-            cleaned_data['closedAt'], cleaned_data['merged'], cleaned_data['mergedAt'], cleaned_data['body'], \
-            cleaned_data['participants'], cleaned_data['comments'], cleaned_data['reviews'] = d['id'], d['databaseId'], \
-                                                                                              d['createdAt'], d[
-                                                                                                  'additions'], d[
-                                                                                                  'deletions'], \
-                                                                                              d['files']['totalCount'], \
-                                                                                              d['closed'], \
-                                                                                              d['closedAt'], d[
-                                                                                                  'merged'], d[
-                                                                                                  'mergedAt'], len(
-                d['body']), d['participants']['totalCount'], \
-                                                                                              d['comments'][
-                                                                                                  'totalCount'], \
-                                                                                              d['reviews']['totalCount']
+            cleaned_data['owner'] = repo['owner']
+            cleaned_data['name'] = repo['name']
+            cleaned_data['id'] = d['id']
+            cleaned_data['databaseId'] = d['databaseId']
+            cleaned_data['createdAt'] = d['createdAt']
+            cleaned_data['additions'] = d['additions']
+            cleaned_data['deletions'] = d['deletions']
+            cleaned_data['number_of_files'] = d['files']['totalCount']
+            cleaned_data['closed'] = d['closed']
+            cleaned_data['closedAt'] = d['closedAt']
+            cleaned_data['merged'] = d['merged']
+            cleaned_data['mergedAt'] = d['mergedAt']
+            cleaned_data['body'] = len(d['body'])
+            cleaned_data['number_of_participants'] = d['participants']['totalCount']
+            cleaned_data['number_of_comments'] = d['comments']['totalCount']
+            cleaned_data['reviews'] = d['reviews']['totalCount']
             cleaned_data['totalLines'] = cleaned_data['additions'] + cleaned_data['deletions']
-            if cleaned_data['files']:
-                cleaned_data['linesFile'] = cleaned_data['totalLines'] / cleaned_data['files']
+
+            if cleaned_data['number_of_files']:
+                cleaned_data['linesFile'] = cleaned_data['totalLines'] / cleaned_data['number_of_files']
+            else:
+                cleaned_data['linesFile'] = 0
+
             if status == 'merged':
                 if cleaned_data['mergedAt']:
                     cleaned_data['duration'] = calculate_duration(cleaned_data['createdAt'], cleaned_data['mergedAt'])
@@ -142,9 +146,11 @@ def save_clean_data(data, repo, status, prs):
                 if cleaned_data['closedAt']:
                     cleaned_data['duration'] = calculate_duration(cleaned_data['createdAt'], cleaned_data['closedAt'])
 
-            if cleaned_data['reviews'] > 0 and cleaned_data['duration'] > 1:
+            if cleaned_data['reviews'] > 0 and cleaned_data['duration'] >= 1:
+                print('adding a pr to PRS')
                 prs = prs.append(cleaned_data, ignore_index=True)
-    return prs
+
+            return prs
 
 
 if __name__ == "__main__":
@@ -156,13 +162,14 @@ if __name__ == "__main__":
     headers = generate_new_header()
     pr_cursor = None
     response = ""
+    skip = True
     for status in list_status:
         prs = pd.read_csv(os.path.abspath(os.getcwd()) + f"/{status}_export_dataframe.csv")
         for repo in repos:
             print('Starting {} PRs for repository {}/{}...'.format(status, repo['owner'], repo['name']))
             page_counter = 0
-            totalcount_name = "prs_" + status
-            total_pages = round(repo[totalcount_name] / 10 +0.5)
+            totalCount_name = "prs_" + status
+            total_pages = round(repo[totalCount_name] / 10 + 0.5)
             hasNextPage = True
             while hasNextPage:
                 try:
@@ -170,19 +177,16 @@ if __name__ == "__main__":
                         print('Changing GitHub Access Token...')
                         headers = generate_new_header()
 
-                    data, response = do_github_request(repo, status, headers, pr_cursor, response)
-
-                    prs = save_clean_data(data, repo, status, prs)
+                    data, response = do_github_request(repo)
+                    prs = save_clean_data(prs)
 
                     pr_cursor = data['data']['repository'][status.upper()]['pageInfo']['endCursor']
                     hasNextPage = data['data']['repository'][status.upper()]['pageInfo']['hasNextPage']
                     remaining_nodes = data['data']['rateLimit']['remaining']
 
-                    if hasNextPage:
-                        print('Continuing with same repository {}/{}...'.format(repo['owner'], repo['name']))
-
-                    else:
+                    if not hasNextPage:
                         print('Changing to next repository...')
+                        pr_cursor = None
 
                 except requests.exceptions.ConnectionError:
                     print(f'Connection error during the request')
@@ -194,8 +198,7 @@ if __name__ == "__main__":
                     print(f'File not found.')
 
                 finally:
-                    print(
-                        'Completed page {}/{} of {} PRs for repository {}/{}'.format(page_counter, total_pages, status,
-                                                                                     repo['owner'], repo['name']))
-                    save_data(prs, status)
+                    print('Completed page {}/{} of {} PRs for repository {}/{}'.format(
+                        page_counter, total_pages, status, repo['owner'], repo['name']))
+                    save_data(prs)
                     page_counter += 1
