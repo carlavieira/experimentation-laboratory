@@ -147,7 +147,6 @@ def save_clean_data(prs):
                     cleaned_data['duration'] = calculate_duration(cleaned_data['createdAt'], cleaned_data['closedAt'])
 
             if cleaned_data['reviews'] > 0 and cleaned_data['duration'] >= 1:
-                print('adding a pr to PRS')
                 prs = prs.append(cleaned_data, ignore_index=True)
 
             return prs
@@ -167,7 +166,7 @@ if __name__ == "__main__":
         prs = pd.read_csv(os.path.abspath(os.getcwd()) + f"/{status}_export_dataframe.csv")
         for repo in repos:
             print('Starting {} PRs for repository {}/{}...'.format(status, repo['owner'], repo['name']))
-            page_counter = 0
+            page_counter = 1
             totalCount_name = "prs_" + status
             total_pages = round(repo[totalCount_name] / 10 + 0.5)
             hasNextPage = True
