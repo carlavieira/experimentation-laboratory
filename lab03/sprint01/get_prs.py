@@ -149,7 +149,7 @@ def save_clean_data(prs):
             if cleaned_data['reviews'] > 0 and cleaned_data['duration'] >= 1:
                 prs = prs.append(cleaned_data, ignore_index=True)
 
-            return prs
+    return prs
 
 
 if __name__ == "__main__":
