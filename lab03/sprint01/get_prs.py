@@ -163,7 +163,7 @@ if __name__ == "__main__":
     skip = True
     for status in list_status:
         prs = pd.read_csv(os.path.abspath(os.getcwd()) + f"/{status}_export_dataframe.csv")
-        for repo in repos[31:34]:
+        for repo in repos:
             print('Starting {} PRs for repository {}/{} ({}/{})...'.format(status, repo['owner'], repo['name'], repo['index']+1, len(repos)))
             page_counter = 1
             totalCount_name = "prs_" + status
