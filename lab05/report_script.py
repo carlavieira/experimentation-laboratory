@@ -118,7 +118,8 @@ def create_query_graphql(cursor=None, all_attributes=False, with_pagination=Fals
     return query
 
 
-def request_graphql(header, all_attributes=False, with_pagination=False):
+def request_graphql(all_attributes=False, with_pagination=False):
+    global header
     try:
         if not with_pagination:
             response = requests.post(f'{URL_GRAPHQL}',
@@ -148,7 +149,8 @@ def request_graphql(header, all_attributes=False, with_pagination=False):
         return response_size
 
 
-def request_rest(header, with_pagination=False):
+def request_rest(with_pagination=False):
+    global header
     try:
         if not with_pagination:
             url = URL_REST + '1'
@@ -198,7 +200,7 @@ if __name__ == "__main__":
             last_cursor = None
             while iteration <= NUM_ITERATION:
                 start = time.time()
-                size = request_graphql(header, all_attributes, with_pagination)
+                size = request_graphql(all_attributes, with_pagination)
                 end = time.time()
 
                 print(
@@ -212,7 +214,7 @@ if __name__ == "__main__":
             last_cursor = None
             while iteration <= NUM_ITERATION:
                 start = time.time()
-                size = request_rest(header, with_pagination)
+                size = request_rest(with_pagination)
                 end = time.time()
 
                 print(
