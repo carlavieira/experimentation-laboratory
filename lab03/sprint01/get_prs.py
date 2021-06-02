@@ -30,7 +30,6 @@ def generate_new_header():
     return new_header
 
 
-# TODO refinar query para pegar todos os dados
 def create_query(cursor=None, owner=None, name=None, state=None):
     if cursor is None:
         cursor = 'null'
@@ -112,7 +111,7 @@ def do_github_request(repository):
     return dict(res.json()), res
 
 
-def save_clean_data(prs,data, repo, status):
+def save_clean_data(prs, data, repo, status):
     for d in data['data']['repository'][status.upper()]['nodes']:
         if d['databaseId'] not in prs['databaseId'].values:
             cleaned_data = dict()
@@ -123,7 +122,6 @@ def save_clean_data(prs,data, repo, status):
             cleaned_data['createdAt'] = d['createdAt']
             cleaned_data['additions'] = d['additions']
             cleaned_data['deletions'] = d['deletions']
-            cleaned_data['files'] = d['files']['totalCount']
             cleaned_data['closed'] = d['closed']
             cleaned_data['closedAt'] = d['closedAt']
             cleaned_data['merged'] = d['merged']
@@ -134,8 +132,10 @@ def save_clean_data(prs,data, repo, status):
             cleaned_data['reviews'] = d['reviews']['totalCount']
             cleaned_data['totalLines'] = cleaned_data['additions'] + cleaned_data['deletions']
 
-            if cleaned_data['files']:
-                cleaned_data['linesFile'] = cleaned_data['totalLines'] / cleaned_data['files']
+            if d['files']:
+                cleaned_data['files'] = d['files']['totalCount']
+                if cleaned_data['files']:
+                    cleaned_data['linesFile'] = cleaned_data['totalLines'] / cleaned_data['files']
 
             if status == 'merged':
                 if cleaned_data['mergedAt']:
@@ -154,7 +154,8 @@ def save_clean_data(prs,data, repo, status):
 if __name__ == "__main__":
     print(f"\n**** Starting GitHub API Requests *****\n")
     repos = list(load_json("repos_info.json"))
-    list_status = ['merged', 'closed']
+    list_status = ['closed']
+    # list_status = ['merged', 'closed']
     token_index = 0
     remaining_nodes = 5000
     headers = generate_new_header()
@@ -199,4 +200,3 @@ if __name__ == "__main__":
                     print('Completed page {}/{} of {} PRs for repository {}/{} ({}/{})'.format(
                         page_counter, total_pages, status, repo['owner'], repo['name'],  repo['index']+1, len(repos)))
                     save_data(prs, status)
-                    page_counter += 1
