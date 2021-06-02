@@ -1,0 +1,198 @@
+
+**** Starting APIs Reports *****
+
+NUM_ITERATION = 5
+NUM_PER_PAGE = 10
+NUM_PAGES = 10
+
+**** Starting GraphQL *****
+
+[GRAPHQL;ONE ATTRIBUTE; ONE PAGE] Iteration 1
+Time:0.3579139709472656
+Size:445
+
+[GRAPHQL;ONE ATTRIBUTE; ONE PAGE] Iteration 2
+Time:0.33292698860168457
+Size:445
+
+[GRAPHQL;ONE ATTRIBUTE; ONE PAGE] Iteration 3
+Time:0.2711601257324219
+Size:445
+
+[GRAPHQL;ONE ATTRIBUTE; ONE PAGE] Iteration 4
+Time:0.251204252243042
+Size:445
+
+[GRAPHQL;ONE ATTRIBUTE; ONE PAGE] Iteration 5
+Time:0.37736082077026367
+Size:445
+
+[GRAPHQL;ALL ATTRIBUTES; ONE PAGE] Iteration 1
+Time:0.29229211807250977
+Size:2527
+
+[GRAPHQL;ALL ATTRIBUTES; ONE PAGE] Iteration 2
+Time:0.5269618034362793
+Size:2527
+
+[GRAPHQL;ALL ATTRIBUTES; ONE PAGE] Iteration 3
+Time:0.2910490036010742
+Size:2527
+
+[GRAPHQL;ALL ATTRIBUTES; ONE PAGE] Iteration 4
+Time:0.425980806350708
+Size:2527
+
+[GRAPHQL;ALL ATTRIBUTES; ONE PAGE] Iteration 5
+Time:0.4094820022583008
+Size:2527
+
+[GRAPHQL;ONE ATTRIBUTE; WITH PAGINATION] Iteration 1
+Time:2.6755199432373047
+Size:4896
+
+[GRAPHQL;ONE ATTRIBUTE; WITH PAGINATION] Iteration 2
+Time:2.77166485786438
+Size:4896
+
+[GRAPHQL;ONE ATTRIBUTE; WITH PAGINATION] Iteration 3
+Time:2.589649200439453
+Size:4896
+
+[GRAPHQL;ONE ATTRIBUTE; WITH PAGINATION] Iteration 4
+Time:2.667628049850464
+Size:4896
+
+[GRAPHQL;ONE ATTRIBUTE; WITH PAGINATION] Iteration 5
+Time:2.8034470081329346
+Size:4896
+
+[GRAPHQL;ALL ATTRIBUTES; WITH PAGINATION] Iteration 1
+Time:4.736901760101318
+Size:25827
+
+[GRAPHQL;ALL ATTRIBUTES; WITH PAGINATION] Iteration 2
+Time:4.701256036758423
+Size:25827
+
+[GRAPHQL;ALL ATTRIBUTES; WITH PAGINATION] Iteration 3
+Time:4.0871148109436035
+Size:25827
+
+[GRAPHQL;ALL ATTRIBUTES; WITH PAGINATION] Iteration 4
+Time:4.419230937957764
+Size:25827
+
+[GRAPHQL;ALL ATTRIBUTES; WITH PAGINATION] Iteration 5
+Time:4.09825325012207
+Size:25827
+
+
+**** Starting REST *****
+
+[REST;ONE ATTRIBUTE; ONE PAGE] Iteration 1
+Time:0.49600720405578613
+Size:9672
+
+[REST;ONE ATTRIBUTE; ONE PAGE] Iteration 2
+Time:0.25893187522888184
+Size:9672
+
+[REST;ONE ATTRIBUTE; ONE PAGE] Iteration 3
+Time:0.24654006958007812
+Size:9672
+
+[REST;ONE ATTRIBUTE; ONE PAGE] Iteration 4
+Time:0.303497314453125
+Size:9672
+
+[REST;ONE ATTRIBUTE; ONE PAGE] Iteration 5
+Time:0.25249385833740234
+Size:9672
+
+[REST;ALL ATTRIBUTES; ONE PAGE] Iteration 1
+Time:0.31377315521240234
+Size:9672
+
+[REST;ALL ATTRIBUTES; ONE PAGE] Iteration 2
+Time:0.2786228656768799
+Size:9672
+
+[REST;ALL ATTRIBUTES; ONE PAGE] Iteration 3
+Time:0.3166358470916748
+Size:9672
+
+[REST;ALL ATTRIBUTES; ONE PAGE] Iteration 4
+Time:0.2999429702758789
+Size:9672
+
+[REST;ALL ATTRIBUTES; ONE PAGE] Iteration 5
+Time:0.3425772190093994
+Size:9672
+
+[REST;ONE ATTRIBUTE; WITH PAGINATION] Iteration 1
+Time:2.8047149181365967
+Size:97211
+
+[REST;ONE ATTRIBUTE; WITH PAGINATION] Iteration 2
+Time:2.521303176879883
+Size:97211
+
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+[REST;ONE ATTRIBUTE; WITH PAGINATION] Iteration 3
+Time:3.4823312759399414
+Size:97211
+
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+[REST;ONE ATTRIBUTE; WITH PAGINATION] Iteration 4
+Time:3.0680110454559326
+Size:97211
+
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+[REST;ONE ATTRIBUTE; WITH PAGINATION] Iteration 5
+Time:3.236633062362671
+Size:97211
+
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+[REST;ALL ATTRIBUTES; WITH PAGINATION] Iteration 1
+Time:3.390129327774048
+Size:97211
+
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+[REST;ALL ATTRIBUTES; WITH PAGINATION] Iteration 2
+Time:2.832751989364624
+Size:97211
+
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+[REST;ALL ATTRIBUTES; WITH PAGINATION] Iteration 3
+Time:2.8978140354156494
+Size:97211
+
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+[REST;ALL ATTRIBUTES; WITH PAGINATION] Iteration 4
+Time:3.242361068725586
+Size:97211
+
+HTTP request error. STATUS: 403
+{'message': 'API rate limit exceeded for user ID 43709270.', 'documentation_url': 'https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting'}
+[REST;ALL ATTRIBUTES; WITH PAGINATION] Iteration 5
+Time:2.872364044189453
+Size:97211
+
