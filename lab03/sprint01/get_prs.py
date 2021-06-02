@@ -91,10 +91,10 @@ def load_json(filename='repos_info.json'):
             return json.load(read_file)
 
     except FileNotFoundError:
-        print(f'Failed to read data... Perform get_repos and assure data.json is in folder.')
+        print(f'Failed to read data... Perform get_repos and assure repos_info.json is in folder.')
 
 
-def save_data(dataframe):
+def save_data(dataframe, status):
     # with open('data_processed.json', 'a') as fp:
     # 	dataframe_toJson = dataframe.to_json()
     # 	json.dump(dataframe_toJson, fp, sort_keys=True, indent=4)
@@ -198,6 +198,5 @@ if __name__ == "__main__":
 
                 finally:
                     print('Completed page {}/{} of {} PRs for repository {}/{} ({}/{})'.format(
-                        page_counter, total_pages, status, repo['owner'], repo['name'],  repo['index']+1, len(users)))
-                    save_data(prs)
-                    page_counter += 1
+                        page_counter, total_pages, status, repo['owner'], repo['name'],  repo['index']+1, len(repos)))
+                    save_data(prs, status)

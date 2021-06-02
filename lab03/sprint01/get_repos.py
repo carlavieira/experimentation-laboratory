@@ -92,10 +92,10 @@ if __name__ == "__main__":
 		except requests.exceptions.HTTPError:
 			print(f'HTTP request error. STATUS: {response.status_code}')
 
-	with open('data.json', 'w') as fp:
+	with open('repos_info.json', 'w') as fp:
 		json.dump(data_array, fp, sort_keys=True, indent=4)
 
 	df = pd.DataFrame(data_array)
 	print("\n**** GitHub API Requests Succeeded *****\n")
-	df.to_csv(os.path.abspath(os.getcwd()) + f'/export_dataframe.csv', index=False, header=True)
+	df.to_csv(os.path.abspath(os.getcwd()) + f'/repos_export_dataframe.csv', index=False, header=True)
 	print("Successful mining! Saved csv with mining results")
