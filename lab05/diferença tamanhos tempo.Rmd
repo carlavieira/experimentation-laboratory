@@ -1,0 +1,144 @@
+---
+title: "diferenças medias"
+author: "Jonathan F. de Aguiar"
+date: "06/06/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+
+```
+
+tratando os bancos de dados
+
+```{r}
+dados = read.csv("results.csv")
+
+tempo_api_rest = dados$time[dados$api == "REST"]
+tempo_api_GRAPHQL = dados$time[dados$api == "GRAPHQL"]
+tempo_att_all = dados$time[dados$attribute_qtt == "all"]
+tempo_att_one = dados$time[dados$attribute_qtt == "one"]
+tempo_pag_T = dados$time[dados$pagination == "True"]
+tempo_pag_F = dados$time[dados$pagination == "False"]
+
+tamanho_api_rest = dados$size[dados$api == "REST"]
+tamanho_api_GRAPHQL = dados$size[dados$api == "GRAPHQL"]
+tamanho_att_all = dados$size[dados$attribute_qtt == "all"]
+tamanho_att_one = dados$size[dados$attribute_qtt == "one"]
+tamanho_pag_T = dados$size[dados$pagination == "True"]
+tamanho_pag_F = dados$size[dados$pagination == "False"]
+
+
+```
+
+verificando normalidade dos dados
+
+#### Tempo
+
+```{r}
+shapiro.test(tempo_api_GRAPHQL)
+hist(tempo_api_GRAPHQL)
+
+shapiro.test(tempo_api_rest)
+hist(tempo_api_rest)
+
+shapiro.test(tempo_att_all)
+hist(tempo_att_all)
+
+shapiro.test(tempo_att_one)
+hist(tempo_att_one)
+
+shapiro.test(tempo_pag_T)
+hist(tempo_pag_T)
+
+shapiro.test(tempo_pag_F)
+hist(tempo_pag_F)
+```
+
+
+### Tamanho
+
+```{r}
+shapiro.test(tamanho_api_GRAPHQL)
+hist(tamanho_api_GRAPHQL)
+
+shapiro.test(tamanho_api_rest)
+hist(tamanho_api_rest)
+
+shapiro.test(tamanho_att_all)
+hist(tamanho_att_all)
+
+shapiro.test(tamanho_att_one)
+hist(tamanho_att_one)
+
+shapiro.test(tamanho_pag_T)
+hist(tamanho_pag_T)
+
+shapiro.test(tamanho_pag_F)
+hist(tamanho_pag_F)
+
+```
+para alfa igual a 0.05, rejeito a hipotese nula para todos os teste, ou seja, não existe evidências de que alguma das amostras sigam uma distribuição normal.
+
+#### Será aplicado o teste da soma de postos de Wilcoxon
+
+#### Tempo
+```{r}
+wilcox.test(x = tempo_api_GRAPHQL, y = tempo_api_rest)
+wilcox.test(x = tempo_att_all,y = tempo_att_one)
+wilcox.test(x = tempo_pag_T, y = tempo_pag_F)
+
+```
+Não rejeito a hipotese nula para alfa igual a 0.05, ou seja, existe evidências de as apis GRAPHQL e Rest gastam a mesma mediana de tempo.
+_____
+Não rejeito a hipotese nula para alfa igual a 0.05, ou seja, existe evidências de os atributos all e one gastam a mesma mediana de tempo.
+_____
+Rejeito a hipotese nula para alfa igual a 0.05, ou seja, existe evidências de o uso de paginação interfere na mediana de tempo.
+
+```{r}
+ggplot(dados)+geom_boxplot(aes(x = pagination, y = time))
+```
+Com auxilio do grafico boxplot, notamos que uso de paginação aumenta o tempo gasto.
+
+
+
+### Tamanho
+
+```{r}
+wilcox.test(x = tamanho_api_GRAPHQL , y =  tamanho_api_rest)
+wilcox.test(x = tamanho_att_all, y = tamanho_att_one)
+wilcox.test(x = tamanho_pag_T, y = tamanho_pag_F)
+```
+Rejeito a hipotese nula para alfa igual a 0.05, ou seja, existe evidências de as apis GRAPHQL e Rest possuem tamanhos diferentes.
+
+```{r}
+
+ggplot(dados)+geom_boxplot(aes(x = api, y = size))
+```
+Com auxilio do grafico boxplot, notamos que a api Rest possui a maior mediana de tamanho
+_____
+
+Não rejeito a hipotese nula para alfa igual a 0.05, ou seja, existe evidências de os atributos all e one possuem tamanhos iguais de mediana.
+
+_____
+
+Rejeito a hipotese nula para alfa igual a 0.05, ou seja, existe evidências de o uso de pagição altera o tamanho dos arquivos
+
+```{r}
+ggplot(dados)+geom_boxplot(aes(x = pagination, size))
+```
+
+Com auxilio do grafico boxplot, notamos que uso de paginação aumenta o tamanho do arquivo.
+
+
+
+
+
+
+
+
+
+
+
